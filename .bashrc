@@ -40,15 +40,10 @@ shopt -s histappend >/dev/null 2>&1
 
 # Ruby Settings
 export RUBY_VERSION=1.9.1
-export RUBYOPT=rubygems
-export RUBY_PATH=/opt/ruby
-export PATH=$RUBY_PATH/bin:$PATH
-export SYDNEY=1
-export MAGLEV_HOME=$HOME/Repositories/maglev
-export PATH=$MAGLEV_HOME/bin:$PATH
+export RUBY_PATH=/usr/lib/ruby
 
-if [[ -s /opt/rvm/scripts/rvm ]] ; then
-  source /opt/rvm/scripts/rvm ;
+if [[ -s ~/.rvm/scripts/rvm ]] ; then
+  source ~/.rvm/scripts/rvm ;
   rvm use ree # evil temp fix
 fi
 
@@ -66,8 +61,8 @@ if [ -n "$SSH_CLIENT" ]; then
   ps1_host="\[\033[01;32m\]\h"
 fi
 
-USER_NAME="Konstantin Haase"
-USER_EMAIL="konstantin.mailinglists@googlemail.com"
+USER_NAME="Garstger Unhold"
+USER_EMAIL="johannes.wollert@gmail.com"
 # Setting up git.
 if [ ! -f ~/.gitconfig ]; then
   git config --global alias.ps push
@@ -121,6 +116,12 @@ case `uname` in
 	PATH=$PATH:/usr/local/mysql/bin
     ;;
   Linux)
+    export EDITOR="gedit"
+    for p in /usr/local/*/bin /usr/*/bin; do
+      export PATH=$p:$PATH
+    done
+    unset p
+    JAVA_HOME="/usr/lib/jvm/java-6-openjdk"
     PATH=$PATH:/var/lib/gems/1.8/bin:/var/lib/gems/1.9/bin
     alias ls='ls --color=auto'
     ;;
@@ -136,32 +137,9 @@ esac
 [ -z "$SVN_EDITOR" ] && SVN_EDITOR="$EDITOR"
 git config --global --replace-all core.editor "$SVN_EDITOR"
 
-# Setting up hadoop.
-export PATH=$HOME/Workspace/jaql/bin:$HOME/Repositories/hadoop-0.18.3/bin:$HOME/Repositories/jaql-0.4/bin:$PATH:/home/hadoop/hadoop/bin/
-if [ `which hadoop-config.sh 2>/dev/null` ]; then
-  . $DOTFILES/hadoop-config-fixed.sh
-  if [ `which jaql 2>/dev/null` ]; then
-    export JAQL_HOME=$(dirname "$(dirname "$(which jaql)")")
-  fi
-fi
-
-# host dependen config
-case $HOSTNAME in
-  hadoop09ws02.hpi.uni-potsdam.de|hadoop09ws10.hpi.uni-potsdam.de)
-    export JAVA_HOME=/home/hadoop/java
-    export PIG_CLASSPATH=/home/hadoop/hadoop/conf/:/home/hadoop02/pig/pig.jar
-    export HADOOPSITEPATH=$(dirname `which hadoop`)/../conf/hadoop-site.xml
-    export PIGDIR=$HOME/pig
-    export PIG_HOME=$PIGDIR
-    ps1_host="\[\033[01;32m\]hadoop"
-    ;;
-  localtoast) ;;
-  *) echo "Host unknown to bashrc." ;;
-esac
-
 # Don't show user name if it's me. make root red.
 case $USER in
-  konstantin|khaase|konstantin.haase|rkh|hadoop02) ;;
+  johannes|jwollert|johannes.wollert|GarstgerUnhold|GarstigerUnhold|J.T.Unhold) ;;
   root)
     ps1_user="\[\033[01;31m\]\u"
     echo "root will be logged out after 10 minutes without input or job"
@@ -237,8 +215,10 @@ alias gdiff='git diff'
 alias st='git st'
 alias log='git lg'
 alias ciam='git ci -am'
+alias ..cd='cd ..'
 
 # common typos by me
+alias dc='cd'
 alias sl='ls'
 alias gti='git'
 alias lg='log'
@@ -301,7 +281,7 @@ push_dotfiles() {
         done
         sudo $installer install git-core || exit
       fi
-      git clone git://github.com/rkh/dotfiles.git $HOME/.dot
+      git clone git://github.com/GarstgerUnhold/dotfiles.git $HOME/dotfiles
       ln -sf $HOME/.dot/{.bash_profile,.bashrc,.git_completion,.screenrc} $HOME/'
   done
 }
