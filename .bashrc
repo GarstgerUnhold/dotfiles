@@ -61,7 +61,7 @@ if [ -n "$SSH_CLIENT" ]; then
   ps1_host="\[\033[01;32m\]\h"
 fi
 
-USER_NAME="Garstger Unhold"
+USER_NAME="Johannes Wollert"
 USER_EMAIL="johannes.wollert@gmail.com"
 # Setting up git.
 if [ ! -f ~/.gitconfig ]; then
@@ -84,7 +84,7 @@ if [ ! -f ~/.gitconfig ]; then
   git config --global color.ui auto
   git config --global help.autocorrect 1
   git config --global push.default matching
-  git config --global github.user "rkh"
+  git config --global github.user "GarstgerUnhold"
   git config --global core.excludesfile ~/.global_gitignore
   echo "please add your github token to ~/.gitconf"
 else
