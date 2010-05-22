@@ -48,8 +48,6 @@ endif
  map <ESC>[3~ x
  " pos1
  map <ESC>[1~ ^
- " end
- map <ESC>[4~ 
  " PgUp
  map <ESC>[5~ <C-B>
  " PgDown
