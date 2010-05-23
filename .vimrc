@@ -124,7 +124,16 @@ endif
  map ,els oelse<CR>{<CR>}<ESC>O
  map ,tex ggO\documentclass[a4paper]{article}<CR>\usepackage{amsmath, amssymb}<CR>\usepackage[ngerman]{babel}<CR>\usepackage[utf8x]{inputenc}<CR>\usepackage[T1]{fontenc}<CR>\usepackage{listings}<CR>\author{Tim Felgentreff, 738147}<CR>\title{}<CR>\date{\today}<CR><CR>\begin{document}<CR>\maketitle<CR>\end{document}<ESC>kkkkk$i
 
-
+  if has("autocmd")
+    " Enable filetype detection
+    filetype plugin indent on
+	     
+  " Restore cursor position
+  autocmd BufReadPost *
+     \ if line("'\"") > 1 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+  endif
 
  "" <F9> toggles highlightning
  " Syntax Highlightning an bzw. aus
@@ -293,3 +302,4 @@ endif
 
  " Strange bug with rkh's vim...
  :syntax enable
+ 
