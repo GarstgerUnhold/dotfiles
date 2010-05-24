@@ -122,7 +122,7 @@ endif
  map ,if oif()<CR>{<CR>}<ESC>kk$i
  map ,for ofor(;;)<CR>{<CR>}<ESC>kk$hhi
  map ,els oelse<CR>{<CR>}<ESC>O
- map ,tex ggO\documentclass[a4paper]{article}<CR>\usepackage{amsmath, amssymb}<CR>\usepackage[ngerman]{babel}<CR>\usepackage[utf8x]{inputenc}<CR>\usepackage[T1]{fontenc}<CR>\usepackage{listings}<CR>\author{Tim Felgentreff, 738147}<CR>\title{}<CR>\date{\today}<CR><CR>\begin{document}<CR>\maketitle<CR>\end{document}<ESC>kkkkk$i
+ map ,tex ggO\documentclass[a4paper]{article}<CR>\usepackage{amsmath, amssymb}<CR>\usepackage[ngerman]{babel}<CR>\usepackage[utf8x]{inputenc}<CR>\usepackage[T1]{fontenc}<CR>\usepackage{listings}<CR>\author{Johannes Wollert, 738191}<CR>\title{}<CR>\date{\today}<CR><CR>\begin{document}<CR>\maketitle<CR>\end{document}<ESC>kkkkk$i
 
   if has("autocmd")
     " Enable filetype detection
