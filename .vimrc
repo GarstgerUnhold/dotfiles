@@ -232,7 +232,6 @@ endif
  au BufNewFile,BufReadPost Makefile se noexpandtab
 
  "" Load Ruby stuff
- au BufNewFile,BufRead *.rb,*.rhtml,*.erb so ~/.vim/scripts/rubysnippets.vim 
  autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
  autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
  autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
