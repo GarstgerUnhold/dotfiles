@@ -114,7 +114,7 @@ if [ $(which mate) ]; then
 	PATH=$PATH:/usr/local/mysql/bin
     ;;
   Linux)
-    export EDITOR="gedit"
+    export EDITOR="vim" 
     for p in /usr/local/*/bin /usr/*/bin; do
       export PATH=$p:$PATH
     done
