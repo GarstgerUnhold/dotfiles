@@ -101,12 +101,13 @@ case `uname` in
   Darwin)
     export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
     export ALT_BOOTDIR=$JAVA_HOME
+	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/cuda/lib
 if [ $(which mate) ]; then
       export EDITOR="mate"
     fi
     function fullscreen() { printf "\e[3;0;0;t\e[8;0;0t"; return 0; }
     alias ls='ls -G'
-    for p in /usr/local/*/bin /usr/*/bin; do
+    for p in /usr/local/*/bin /usr/*/bin /usr/local/sbin; do
       export PATH=$p:$PATH
     done
     unset p
@@ -212,7 +213,6 @@ alias gdiff='git diff'
 alias st='git st'
 alias log='git lg'
 alias ciam='git ci -am'
-alias ..cd='cd ..'
 alias cd..='cd ..'
 alias dcommit='git svn dcommit'
 alias rebase='git svn rebase'
@@ -288,7 +288,7 @@ push_dotfiles() {
 
 # directory for project
 d() {
-  for dir in $HOME/Workspace/$1 $HOME/Repositories/$1 $HOME/Repositories/*-$1 $HOME/$1 $1 $RUBY_PATH/$RUBY_VERSION/lib/ruby/gems/*/gems/$1-*; do
+  for dir in $HOME/workspace/$1 $HOME/Repositories/$1 $HOME/Repositories/*-$1 $HOME/$1 $1 $RUBY_PATH/$RUBY_VERSION/lib/ruby/gems/*/gems/$1-*; do
     if [ -d $dir ]; then
       echo $dir
       break
