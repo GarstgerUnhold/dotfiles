@@ -216,6 +216,12 @@ alias ciam='git ci -am'
 alias cd..='cd ..'
 alias dcommit='git svn dcommit'
 alias rebase='git svn rebase'
+alias ss='script/server'
+alias sc='script/console'
+alias bess='bundle exec script/server'
+alias besc='bundle exec script/console'
+alias be='bundle exec'
+alias rc='ruby $HOME/workspace/redcar/bin/redcar --fork --quick'
 
 # common typos by me
 alias dc='cd'
