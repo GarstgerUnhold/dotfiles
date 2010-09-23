@@ -213,6 +213,8 @@ alias gdiff='git diff'
 alias st='git st'
 alias log='git lg'
 alias ciam='git ci -am'
+alias cim='git ci -m'
+alias gap='git add --patch'
 alias cd..='cd ..'
 alias dcommit='git svn dcommit'
 alias rebase='git svn rebase'
@@ -221,7 +223,9 @@ alias sc='script/console'
 alias bess='bundle exec script/server'
 alias besc='bundle exec script/console'
 alias be='bundle exec'
-alias rc='ruby $HOME/workspace/redcar/bin/redcar --fork --quick'
+alias rc='ruby $HOME/workspace/redcar/bin/redcar'
+
+source ~/.git-completion.bash
 
 # common typos by me
 alias dc='cd'
