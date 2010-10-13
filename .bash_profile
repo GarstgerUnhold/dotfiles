@@ -77,6 +77,7 @@ if [ ! -f ~/.gitconfig ]; then
   git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset %Cblue%aN%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
   git config --global user.name "$USER_NAME"
   git config --global user.email "$USER_EMAIL"
+  git config --global merge.tool vimdiff
   git config --global color.branch auto
   git config --global color.diff auto
   git config --global color.grep auto
@@ -215,6 +216,7 @@ alias log='git lg'
 alias ciam='git ci -am'
 alias cim='git ci -m'
 alias gap='git add --patch'
+alias gcam='git commit --amend -m'
 alias cd..='cd ..'
 alias dcommit='git svn dcommit'
 alias rebase='git svn rebase'
