@@ -107,6 +107,7 @@ if [ $(which mate) ]; then
       export EDITOR="mate"
     fi
     function fullscreen() { printf "\e[3;0;0;t\e[8;0;0t"; return 0; }
+	function pdfman() { man -t $1 | open -a /Applications/Preview.app -f; }
     alias ls='ls -G'
     for p in /usr/local/*/bin /usr/*/bin /usr/local/sbin; do
       export PATH=$p:$PATH
