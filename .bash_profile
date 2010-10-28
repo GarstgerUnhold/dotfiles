@@ -226,7 +226,7 @@ alias sc='script/console'
 alias bess='bundle exec script/server'
 alias besc='bundle exec script/console'
 alias be='bundle exec'
-alias rc='ruby $HOME/workspace/redcar/bin/redcar'
+alias rc='ruby $HOME/workspace/redcar/bin/redcar --quick --fork'
 
 source ~/.git-completion.bash
 
