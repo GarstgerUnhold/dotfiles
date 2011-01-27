@@ -41,6 +41,7 @@ shopt -s histappend >/dev/null 2>&1
 # Ruby Settings
 export RUBY_VERSION=1.9.1
 export RUBY_PATH=/usr/lib/ruby
+export GEM_OPEN_EDITOR='rc'
 
 if [[ -s ~/.rvm/scripts/rvm ]] ; then
   source ~/.rvm/scripts/rvm ;
@@ -103,8 +104,8 @@ case `uname` in
     export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
     export ALT_BOOTDIR=$JAVA_HOME
 	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/cuda/lib
-if [ $(which mate) ]; then
-      export EDITOR="mate"
+if [ $(which redcar) ]; then
+      export EDITOR="rc"
     fi
     function fullscreen() { printf "\e[3;0;0;t\e[8;0;0t"; return 0; }
 	function pdfman() { man -t $1 | open -a /Applications/Preview.app -f; }
@@ -117,7 +118,7 @@ if [ $(which mate) ]; then
 	PATH=$PATH:/usr/local/mysql/bin
     ;;
   Linux)
-    export EDITOR="vim" 
+    export EDITOR="vi" 
     for p in /usr/local/*/bin /usr/*/bin; do
       export PATH=$p:$PATH
     done
@@ -137,7 +138,7 @@ esac
 export ALT_BOOTDIR=$JAVA_HOME
 
 # setting up editor
-[ -z "$EDITOR" ] && EDITOR="vim"
+[ -z "$EDITOR" ] && EDITOR="vi"
 [ -z "$SVN_EDITOR" ] && SVN_EDITOR="$EDITOR"
 git config --global --replace-all core.editor "$SVN_EDITOR"
 
