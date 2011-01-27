@@ -41,6 +41,7 @@ shopt -s histappend >/dev/null 2>&1
 # Ruby Settings
 export RUBY_VERSION=1.9.1
 export RUBY_PATH=/usr/lib/ruby
+export GEM_OPEN_EDITOR='rc'
 
 if [[ -s ~/.rvm/scripts/rvm ]] ; then
   source ~/.rvm/scripts/rvm ;
@@ -61,7 +62,7 @@ if [ -n "$SSH_CLIENT" ]; then
   ps1_host="\[\033[01;32m\]\h"
 fi
 
-USER_NAME="Johannes Wollert"
+USER_NAME="jwollert"
 USER_EMAIL="johannes.wollert@gmail.com"
 # Setting up git.
 if [ ! -f ~/.gitconfig ]; then
@@ -77,6 +78,7 @@ if [ ! -f ~/.gitconfig ]; then
   git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset %Cblue%aN%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
   git config --global user.name "$USER_NAME"
   git config --global user.email "$USER_EMAIL"
+  git config --global merge.tool vimdiff
   git config --global color.branch auto
   git config --global color.diff auto
   git config --global color.grep auto
@@ -96,19 +98,19 @@ else
   fi
 fi
 
- . $DOTFILES/.git_completion
-
 # OS specific config.
 case `uname` in
   Darwin)
     export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
-    if [ $(which mate) ]; then
-      export EDITOR="mate"
-      export SVN_EDITOR="mate -wl1"
+    export ALT_BOOTDIR=$JAVA_HOME
+	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/cuda/lib
+if [ $(which redcar) ]; then
+      export EDITOR="rc"
     fi
     function fullscreen() { printf "\e[3;0;0;t\e[8;0;0t"; return 0; }
+	function pdfman() { man -t $1 | open -a /Applications/Preview.app -f; }
     alias ls='ls -G'
-    for p in /usr/local/*/bin /usr/*/bin; do
+    for p in /usr/local/*/bin /usr/*/bin /usr/local/sbin; do
       export PATH=$p:$PATH
     done
     unset p
@@ -116,7 +118,7 @@ case `uname` in
 	PATH=$PATH:/usr/local/mysql/bin
     ;;
   Linux)
-    export EDITOR="gedit"
+    export EDITOR="vi" 
     for p in /usr/local/*/bin /usr/*/bin; do
       export PATH=$p:$PATH
     done
@@ -132,8 +134,11 @@ case `uname` in
   *) echo "OS unknown to bashrc." ;;
 esac
 
+#JAVA settings
+export ALT_BOOTDIR=$JAVA_HOME
+
 # setting up editor
-[ -z "$EDITOR" ] && EDITOR="vim"
+[ -z "$EDITOR" ] && EDITOR="vi"
 [ -z "$SVN_EDITOR" ] && SVN_EDITOR="$EDITOR"
 git config --global --replace-all core.editor "$SVN_EDITOR"
 
@@ -148,14 +153,12 @@ case $USER in
   *) ps1_user="\[\033[01;32m\]\u" ;;
 esac
 
+ps1_vcs='\[\033[01;33m\]$(__git_ps1 " (git: %s) ")\[\033[00m\]'
+
 # VCS in prompt.
 parse_svn_branch() { parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk -F / '{print " (svn: "$1 "/" $2 ")"}'; }
 parse_svn_url() { svn info 2>/dev/null | sed -ne 's#^URL: ##p'; }
 parse_svn_repository_root() { LANG=C svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'; }
-
-# FIXME LATER
-#ps1_vcs='\[\033[01;33m\]$(__git_ps1 " (git: %s)")$(parse_svn_branch)\[\033[00m\]'
-ps1_vcs='\[\033[01;33m\]$(__git_ps1 " (git: %s)")\[\033[00m\]'
 
 # Ruby version in prompt if Rakefile exists.
 show_ruby_version() {
@@ -182,7 +185,7 @@ ps1_pwd='\[\033[00;32m\]$(short_pwd)\[\033[00m\]'
 if [ -n "$ps1_user" ] && [ -n "$ps1_host" ]; then ps1_user="$ps1_user@"; fi
 PS1="$ps1_user$ps1_host"
 if [ "$PS1" != "" ]; then PS1="$PS1\[\033[01;30m\]:\[\033[00m\]"; fi
-export PS1="$PS1$ps1_pwd$ps1_vcs $ps1_ruby\[\033[01;32m\]→\[\033[00m\] "
+export PS1="$PS1$ps1_pwd$ps1_vcs$ps1_ruby\[\033[01;32m\]→\[\033[00m\] "
 
 # Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
@@ -215,7 +218,24 @@ alias gdiff='git diff'
 alias st='git st'
 alias log='git lg'
 alias ciam='git ci -am'
-alias ..cd='cd ..'
+alias cim='git ci -m'
+alias gap='git add --patch'
+alias gcam='git commit --amend -m'
+alias cd..='cd ..'
+alias dcommit='git svn dcommit'
+alias rebase='git svn rebase'
+alias ss='script/server'
+alias sc='script/console'
+alias bess='bundle exec script/server'
+alias besc='bundle exec script/console'
+alias be='bundle exec'
+alias rc='ruby $HOME/workspace/redcar/bin/redcar --quick '
+alias multiforce='$HOME/user-apps/multiforcer/CUDA-Multiforcer '
+alias jtr='$HOME/user-apps/dist_john/run/john '
+alias john='$HOME/user-apps/dist_john/run/john '
+alias nix='$HOME/user-apps/nix/64/brute'
+
+source ~/.git-completion.bash
 
 # common typos by me
 alias dc='cd'
@@ -288,7 +308,7 @@ push_dotfiles() {
 
 # directory for project
 d() {
-  for dir in $HOME/Workspace/$1 $HOME/Repositories/$1 $HOME/Repositories/*-$1 $HOME/$1 $1 $RUBY_PATH/$RUBY_VERSION/lib/ruby/gems/*/gems/$1-*; do
+  for dir in $HOME/workspace/$1 $HOME/Repositories/$1 $HOME/Repositories/*-$1 $HOME/$1 $1 $RUBY_PATH/$RUBY_VERSION/lib/ruby/gems/*/gems/$1-*; do
     if [ -d $dir ]; then
       echo $dir
       break
@@ -307,6 +327,34 @@ with_project() {
     echo "unknown project"
   fi
   unset target
+}
+
+function filter_git_repo () 
+{ 
+    cd ../../GitRepos/$1;
+    git filter-branch --subdirectory-filter $1 -- --all;
+    cd ../../reporting_branch/cockpit/
+}
+
+function push_git_repo () 
+{ 
+    git push $1 --all
+}
+
+function add_git_repo () 
+{ 
+    git remote add $1 ../../GitRepos/$1;
+    mkdir -p ../../GitRepos/$1;
+    cd ../../GitRepos/$1;
+    git init --bare;
+    cd ../../reporting_branch/cockpit/
+}
+
+function convert_subdirectory_to_git_repo ()
+{
+    add_git_repo $1
+    push_git_repo $1
+    filter_git_repo $1
 }
 
 # cd to project
