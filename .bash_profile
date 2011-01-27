@@ -229,7 +229,11 @@ alias sc='script/console'
 alias bess='bundle exec script/server'
 alias besc='bundle exec script/console'
 alias be='bundle exec'
-alias rc='ruby $HOME/workspace/redcar/bin/redcar --quick --fork'
+alias rc='ruby $HOME/workspace/redcar/bin/redcar --quick '
+alias multiforce='$HOME/user-apps/multiforcer/CUDA-Multiforcer '
+alias jtr='$HOME/user-apps/dist_john/run/john '
+alias john='$HOME/user-apps/dist_john/run/john '
+alias nix='$HOME/user-apps/nix/64/brute'
 
 source ~/.git-completion.bash
 
