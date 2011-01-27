@@ -153,6 +153,8 @@ case $USER in
   *) ps1_user="\[\033[01;32m\]\u" ;;
 esac
 
+ps1_vcs='\[\033[01;33m\]$(__git_ps1 " (git: %s) ")\[\033[00m\]'
+
 # VCS in prompt.
 parse_svn_branch() { parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk -F / '{print " (svn: "$1 "/" $2 ")"}'; }
 parse_svn_url() { svn info 2>/dev/null | sed -ne 's#^URL: ##p'; }
@@ -183,7 +185,7 @@ ps1_pwd='\[\033[00;32m\]$(short_pwd)\[\033[00m\]'
 if [ -n "$ps1_user" ] && [ -n "$ps1_host" ]; then ps1_user="$ps1_user@"; fi
 PS1="$ps1_user$ps1_host"
 if [ "$PS1" != "" ]; then PS1="$PS1\[\033[01;30m\]:\[\033[00m\]"; fi
-export PS1="$PS1$ps1_pwd$ps1_vcs $ps1_ruby\[\033[01;32m\]→\[\033[00m\] "
+export PS1="$PS1$ps1_pwd$ps1_vcs$ps1_ruby\[\033[01;32m\]→\[\033[00m\] "
 
 # Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
