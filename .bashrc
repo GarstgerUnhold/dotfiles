@@ -4,6 +4,23 @@
 # Source global definitions
 if [ -f /etc/bashrc ]; then . /etc/bashrc; fi
 
+#define all colors
+if [ $(uname) != "SunOS" ] && [ "$TERM" != "dumb" ]; then
+   COLOR_RED="\[\033[00;31m\]"
+   COLOR_GREEN="\[\033[00;32m\]"
+   COLOR_YELLOW="\[\033[00;33m\]"
+   COLOR_BLUE="\[\033[00;34m\]"
+   COLOR_MAGENTA="\[\033[00;35m\]"
+   COLOR_CYAN="\[\033[00;36m\]"
+   COLOR_RED_BOLD="\[\033[01;31m\]"
+   COLOR_GREEN_BOLD="\[\033[01;32m\]"
+   COLOR_YELLOW_BOLD="\[\033[01;33m\]"
+   COLOR_BLUE_BOLD="\[\033[01;34m\]"
+   COLOR_MAGENTA_BOLD="\[\033[01;35m\]"
+   COLOR_CYAN_BOLD="\[\033[01;36m\]"
+   COLOR_NONE="\[\033[00m\]"
+fi
+
 # Function to resolve soft links
 function delink()
 {
@@ -39,7 +56,7 @@ export HISTCONTROL=ignoreboth
 shopt -s histappend >/dev/null 2>&1
 
 # Ruby Settings
-export RUBY_VERSION=1.9.1
+export RUBY_VERSION=1.9.2
 export RUBY_PATH=/usr/lib/ruby
 export GEM_OPEN_EDITOR='rc'
 
@@ -53,14 +70,78 @@ if [ !`which install_ruby 2>/dev/null` ] && [ `which ruby 2>/dev/null` ]; then
   export RUBY_VERSION=$(ruby --version | sed -e "s/^ruby \(.\..\..\).*$/\1/")
 fi
 
+function spwd {
+   LENGTH="20"
+
+   SPWD=${PWD#$HOME}
+   if [ ${#SPWD} -le ${#PWD} ]; then
+      SPWD="~${PWD#$HOME}"
+   else
+      SPWD=${PWD}
+   fi
+   if [ ${#SPWD} -gt $(($LENGTH)) ]; then
+      echo "${SPWD:0:1}...${SPWD:$((${#SPWD}-$LENGTH+3)):$LENGTH}"
+   else
+      echo "$SPWD"
+   fi
+}
+
+function prompt {
+
+  # Show last commands exit-code by smiley
+  if [ $? = 0 ]; then
+    EXITCODE="${COLOR_GREEN_BOLD}✔"
+  else
+    EXITCODE="${COLOR_RED_BOLD}✘"
+  fi
+  EXITCODE=$EXITCODE${COLOR_NONE}
+
+  # set variable identifying the chroot you work in (used in the prompt below)
+  if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+  fi
+
+  PS1="${debian_chroot:+($debian_chroot)}"
+
+  USER=$(whoami)
+  if [ -z $HOSTNAME ]; then
+    export HOSTNAME=`hostname -s`
+    echo $HOSTNAME
+  fi
+  # set user and host
+  if [ $USER == "root" ]; then
+    MACHINE="${COLOR_RED_BOLD}"
+  else
+    extras=true
+    MACHINE="${COLOR_GREEN}"
+  fi
+  MACHINE="${MACHINE}${HOSTNAME}@${USER}${COLOR_NONE}"
+
+  PS1="${MACHINE}${COLOR_YELLOW_BOLD} \$(spwd)${COLOR_NONE}"
+
+  # SHOW RUBY VERSION
+  if [ "$extras" = true ]; then
+    PS1="$PS1 \$(~/.rvm/bin/rvm-prompt u)"
+  fi
+
+  # Show the current branch
+  if [ "$extras" = true ]; then
+    source "$HOME"/bin/bash_vcs.sh
+    VCS=`echo -e $(__prompt_command)`
+  fi
+  if [ -z "$VCS" ]; then
+    EXITCODE=" ${EXITCODE}"
+  else
+    VCS="${COLOR_YELLOW_BOLD} ❰${VCS}${COLOR_YELLOW_BOLD}❱${COLOR_NONE}"
+  fi
+  if [ "$extras" = true ]; then
+    PS1="$PS1$VCS"
+  fi
+  PS1="$PS1$EXITCODE "
+}
+
 # Disable XON/XOFF flow control (^s/^q).
 stty -ixon
-
-# SSH specific config.
-if [ -n "$SSH_CLIENT" ]; then
-  # show host only if this is an ssh session
-  ps1_host="\[\033[01;32m\]\h"
-fi
 
 USER_NAME="jwollert"
 USER_EMAIL="johannes.wollert@gmail.com"
@@ -118,7 +199,7 @@ if [ $(which redcar) ]; then
 	PATH=$PATH:/usr/local/mysql/bin
     ;;
   Linux)
-    export EDITOR="vi" 
+    export EDITOR="vi"
     for p in /usr/local/*/bin /usr/*/bin; do
       export PATH=$p:$PATH
     done
@@ -141,60 +222,6 @@ export ALT_BOOTDIR=$JAVA_HOME
 [ -z "$EDITOR" ] && EDITOR="vi"
 [ -z "$SVN_EDITOR" ] && SVN_EDITOR="$EDITOR"
 git config --global --replace-all core.editor "$SVN_EDITOR"
-
-# Don't show user name if it's me. make root red.
-case $USER in
-  johannes|jwollert|johannes.wollert|GarstgerUnhold|GarstigerUnhold|J.T.Unhold) ;;
-  root)
-    ps1_user="\[\033[01;31m\]\u"
-    echo "root will be logged out after 10 minutes without input or job"
-    export TMOUT=600
-    ;;
-  *) ps1_user="\[\033[01;32m\]\u" ;;
-esac
-
-ps1_vcs='\[\033[01;33m\]$(__git_ps1 " (git: %s) ")\[\033[00m\]'
-
-# VCS in prompt.
-parse_svn_branch() { parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk -F / '{print " (svn: "$1 "/" $2 ")"}'; }
-parse_svn_url() { svn info 2>/dev/null | sed -ne 's#^URL: ##p'; }
-parse_svn_repository_root() { LANG=C svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'; }
-
-# Ruby version in prompt if Rakefile exists.
-show_ruby_version() {
-  if [ -f "Rakefile" ] && [ `which ruby 2>/dev/null` ]; then
-    echo -n "$RUBY_VERSION "
-  fi
-}
-
-ps1_ruby='\[\033[01;30m\]$(show_ruby_version)\[\033[00m\]'
-
-# Short PWD, if it's to long.
-short_pwd() {
-  FIXED_PWD=$(echo $PWD | sed "s:^$HOME:~:g")
-  if [ ${#FIXED_PWD} -gt $(($PWD_LENGTH)) ]; then
-    echo "${FIXED_PWD:0:$((4))}...${FIXED_PWD:$((${#PWD}-$PWD_LENGTH+7)):$(($PWD_LENGTH-7))}"
-  else
-    echo "$FIXED_PWD"
-  fi
-}
-
-ps1_pwd='\[\033[00;32m\]$(short_pwd)\[\033[00m\]'
-
-# Building $PS1.
-if [ -n "$ps1_user" ] && [ -n "$ps1_host" ]; then ps1_user="$ps1_user@"; fi
-PS1="$ps1_user$ps1_host"
-if [ "$PS1" != "" ]; then PS1="$PS1\[\033[01;30m\]:\[\033[00m\]"; fi
-export PS1="$PS1$ps1_pwd$ps1_vcs$ps1_ruby\[\033[01;32m\]→\[\033[00m\] "
-
-# Make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
-
-# If this is an xterm set the title to user@host:dir.
-case "$TERM" in
-  xterm*|rxvt*) export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"' ;;
-  *) ;;
-esac
 
 # Enable color support. Don't add ls here, it behaves different on Darwin/BSD.
 if [ -x /usr/bin/dircolors ]; then eval "`dircolors -b`"; fi
@@ -235,7 +262,9 @@ alias jtr='$HOME/user-apps/dist_john/run/john '
 alias john='$HOME/user-apps/dist_john/run/john '
 alias nix='$HOME/user-apps/nix/64/brute'
 
-source ~/.git-completion.bash
+if [ "$extras" = true ]; then
+  source ~/.git-completion.bash
+fi
 
 # common typos by me
 alias dc='cd'
@@ -248,7 +277,6 @@ for cmd in st ci add b c chp lg clone clean push; do alias git$cmd='git $cmd'; d
 #  alias git=hub
 #fi
 
-#alias et='$EDITOR $(ls -A)'
 function et() {
   cmd=$EDITOR
   if [ $# = 0 ]; then
@@ -329,34 +357,6 @@ with_project() {
   unset target
 }
 
-function filter_git_repo () 
-{ 
-    cd ../../GitRepos/$1;
-    git filter-branch --subdirectory-filter $1 -- --all;
-    cd ../../reporting_branch/cockpit/
-}
-
-function push_git_repo () 
-{ 
-    git push $1 --all
-}
-
-function add_git_repo () 
-{ 
-    git remote add $1 ../../GitRepos/$1;
-    mkdir -p ../../GitRepos/$1;
-    cd ../../GitRepos/$1;
-    git init --bare;
-    cd ../../reporting_branch/cockpit/
-}
-
-function convert_subdirectory_to_git_repo ()
-{
-    add_git_repo $1
-    push_git_repo $1
-    filter_git_repo $1
-}
-
 # cd to project
 c() { with_project $1 cd; }
 
@@ -368,5 +368,8 @@ if [ -f /etc/bash_completion ]; then . /etc/bash_completion; fi
 if [ -f ~/.tabtab.bash ]; then . ~/.tabtab.bash; fi
 set show-all-if-ambiguous on
 
+# set prompt
+PROMPT_COMMAND=prompt
+
 # Clean up.
-unset ps1_user ps1_host ps1_vcs ps_ruby ps1_pwd ps1_ruby script this dir bin
+unset script this dir bin
