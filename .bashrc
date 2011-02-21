@@ -119,10 +119,6 @@ function prompt {
 
   PS1="${MACHINE}${COLOR_YELLOW_BOLD} \$(spwd)${COLOR_NONE}"
 
-  # SHOW RUBY VERSION
-  if [ "$extras" = true ]; then
-    PS1="$PS1 \$(~/.rvm/bin/rvm-prompt u)"
-  fi
 
   # Show the current branch
   if [ "$extras" = true ]; then
@@ -136,7 +132,12 @@ function prompt {
   fi
   if [ "$extras" = true ]; then
     PS1="$PS1$VCS"
+    if [ -f "Rakefile" ] && [ `which ruby 2>/dev/null` ]; then
+      PS1="$PS1 $RUBY_VERSION "
+      # PS1="$PS1 $RUBY_VERSION \$(~/.rvm/bin/rvm-prompt u)"
+    fi
   fi
+
   PS1="$PS1$EXITCODE "
 }
 
