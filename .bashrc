@@ -121,12 +121,12 @@ function prompt {
   if [ -z "$VCS" ]; then
     EXITCODE=" ${EXITCODE}"
   else
-    VCS="${COLOR_YELLOW_BOLD} ❰${VCS}${COLOR_YELLOW_BOLD}❱${COLOR_NONE}"
+    VCS="${COLOR_YELLOW_BOLD} ❰${VCS}${COLOR_YELLOW_BOLD}❱ ${COLOR_NONE}"
   fi
   if [ "$extras" = true ]; then
     PS1="$PS1$VCS"
     if [ -f "Rakefile" ] && [ `which ruby 2>/dev/null` ]; then
-      PS1="$PS1 $RUBY_VERSION "
+      PS1="$PS1$RUBY_VERSION "
       # PS1="$PS1 $RUBY_VERSION \$(~/.rvm/bin/rvm-prompt u)"
     fi
   fi
