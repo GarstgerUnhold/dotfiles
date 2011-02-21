@@ -71,19 +71,12 @@ if [ !`which install_ruby 2>/dev/null` ] && [ `which ruby 2>/dev/null` ]; then
 fi
 
 function spwd {
-   LENGTH="20"
-
-   SPWD=${PWD#$HOME}
-   if [ ${#SPWD} -le ${#PWD} ]; then
-      SPWD="~${PWD#$HOME}"
-   else
-      SPWD=${PWD}
-   fi
-   if [ ${#SPWD} -gt $(($LENGTH)) ]; then
-      echo "${SPWD:0:1}...${SPWD:$((${#SPWD}-$LENGTH+3)):$LENGTH}"
-   else
-      echo "$SPWD"
-   fi
+  FIXED_PWD=$(echo $PWD | sed "s:^$HOME:~:g")
+  if [ ${#FIXED_PWD} -gt $(($PWD_LENGTH)) ]; then
+    echo "${FIXED_PWD:0:$((4))}...${FIXED_PWD:$((${#PWD}-$PWD_LENGTH+7)):$(($PWD_LENGTH-7))}"
+  else
+    echo "$FIXED_PWD"
+  fi
 }
 
 function prompt {
