@@ -108,7 +108,7 @@ function prompt {
     extras=true
     MACHINE="${COLOR_GREEN}"
   fi
-  MACHINE="${MACHINE}${HOSTNAME}@${USER}${COLOR_NONE}"
+  MACHINE="${MACHINE}${USER}@${HOSTNAME}${COLOR_NONE}"
 
   PS1="${MACHINE}${COLOR_YELLOW_BOLD} \$(spwd)${COLOR_NONE}"
 
