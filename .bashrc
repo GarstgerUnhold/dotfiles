@@ -126,7 +126,7 @@ function prompt {
   if [ "$extras" = true ]; then
     PS1="$PS1$VCS"
     if [ -f "Rakefile" ] && [ `which ruby 2>/dev/null` ]; then
-      PS1="$PS1$RUBY_VERSION "
+      PS1="$PS1${COLOR_YELLOW_BOLD}$RUBY_VERSION ${COLOR_NONE}"
       # PS1="$PS1 $RUBY_VERSION \$(~/.rvm/bin/rvm-prompt u)"
     fi
   fi
