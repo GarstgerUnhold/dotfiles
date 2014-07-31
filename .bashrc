@@ -56,13 +56,12 @@ export HISTCONTROL=ignoreboth
 shopt -s histappend >/dev/null 2>&1
 
 # Ruby Settings
-export RUBY_VERSION=1.9.2
+export RUBY_VERSION=2.0.0
 export RUBY_PATH=/usr/lib/ruby
 export GEM_OPEN_EDITOR='rc'
 
 if [[ -s ~/.rvm/scripts/rvm ]] ; then
-  source ~/.rvm/scripts/rvm ;
-  rvm use ree # evil temp fix
+  rvm use $RUBY_VERSION
 fi
 
 # Fix Ruby version
@@ -111,7 +110,6 @@ function prompt {
   MACHINE="${MACHINE}${USER}@${HOSTNAME}${COLOR_NONE}"
 
   PS1="${MACHINE}${COLOR_YELLOW_BOLD} \$(spwd)${COLOR_NONE}"
-
 
   # Show the current branch
   if [ "$extras" = true ]; then
@@ -212,6 +210,9 @@ esac
 #JAVA settings
 export ALT_BOOTDIR=$JAVA_HOME
 
+#Node settings
+export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
+
 # setting up editor
 [ -z "$EDITOR" ] && EDITOR="vi"
 [ -z "$SVN_EDITOR" ] && SVN_EDITOR="$EDITOR"
@@ -250,8 +251,8 @@ alias sc='script/console'
 alias bess='bundle exec script/server'
 alias besc='bundle exec script/console'
 alias be='bundle exec'
-alias r='rails'
-alias rc='ruby $HOME/workspace/redcar/bin/redcar --quick '
+alias r='bundle exec rails'
+alias rc='use jruby-head@redcar && ruby $HOME/workspace/redcar/bin/redcar --quick '
 alias multiforce='$HOME/user-apps/multiforcer/CUDA-Multiforcer '
 alias jtr='$HOME/user-apps/dist_john/run/john '
 alias john='$HOME/user-apps/dist_john/run/john '
@@ -368,3 +369,5 @@ PROMPT_COMMAND=prompt
 
 # Clean up.
 unset script this dir bin
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
